@@ -35,11 +35,9 @@ app.post("/add/ninja", (req, res) => {
   const ninja = req.body as NinjaProps;
 
   const ninjasFromDb = localstorage.getItem("ninjas")?.toString() || "";
-  const parsedDb = JSON.parse(ninjasFromDb || "[]");
+  const ninjasList = JSON.parse(ninjasFromDb || "[]");
 
   ninja.id = uuid();
-
-  const ninjasList: NinjaProps[] = Array.isArray(parsedDb) ? parsedDb : [];
 
   ninjasList.push(ninja);
 
@@ -50,17 +48,38 @@ app.post("/add/ninja", (req, res) => {
   });
 });
 
-/**
- * Exercício 01: Criar o método de atualizar usuário
- *
- * Restrições:
- * - Não pode atualziar o "id", caso o id venha no body, vocês irão utilizar o operador delete no
- * req.body.id
- * - Quero editar o registro que tenha exatamente o mesmo id do req.params.id
- * - Caso o registro não exista, retornar uma mensagem com o código HTTP adequado para elemento não
- * encontrado e uma mensagem falando que o Ninja não está cadastrado
- */
-app.patch("/update/ninja/:id", (req, res) => {});
+app.patch("/update/ninja/:id", (req, res) => {
+  const { id } = req.params;
+  const body: NinjaProps = req.body;
+
+  body.id = id;
+
+  const ninjas = localstorage.getItem("ninjas");
+  const parsedNinjas: NinjaProps[] = JSON.parse(ninjas || "[]");
+
+  let hasEdited = false;
+
+  parsedNinjas.forEach((ninja, index) => {
+    if (ninja.id === id) {
+      const updatedNinja = { ...ninja, ...body };
+      const deleteCount = 1;
+
+      parsedNinjas.splice(index, deleteCount, updatedNinja);
+
+      hasEdited = true;
+      return;
+    }
+  });
+
+  if (!hasEdited) {
+    res.status(404).json({ message: "Ninja não encontrado no livro bingo" });
+    return;
+  }
+
+  localstorage.setItem("ninjas", JSON.stringify(parsedNinjas));
+
+  res.status(200).json({ message: "Ninja atualizado com sucesso" });
+});
 
 // Remover
 app.delete("/delete/ninja", (req, res) => {});
