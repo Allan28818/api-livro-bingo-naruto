@@ -11,8 +11,20 @@ const localstorage = new LocalStorage("./database/ninjas");
 
 // Buscar os ninjas foragidos
 app.get("/", (req, res) => {
+  const { name } = req.query;
   const ninjas = localstorage.getItem("ninjas");
-  const parsedNinjas = JSON.parse(ninjas || "[]");
+  const parsedNinjas: NinjaProps[] = JSON.parse(ninjas || "[]");
+
+  if (name) {
+    const filteredNinjas = parsedNinjas.filter((ninja) => {
+      ninja.name === name;
+    });
+
+    res.status(200).json({ ninjas: filteredNinjas });
+
+    return;
+  }
+
   res.status(200).json({ ninjas: parsedNinjas });
 });
 
