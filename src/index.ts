@@ -66,6 +66,8 @@ app.patch("/update/ninja/:id", (req, res) => {
   try {
       const id = req.params.id
 
+      delete req?.body?.id
+
       const ninjas = localstorage.getItem("ninjas");
       const parsedNinjas: NinjaProps[] = JSON.parse(ninjas || "[]");
 
@@ -76,6 +78,8 @@ app.patch("/update/ninja/:id", (req, res) => {
 
       const ninjasFiltrados: NinjaProps[] = parsedNinjas.filter(ninja => ninja.id !== id)
       ninjasFiltrados.push(ninjaAtualizado)
+
+
 
       localstorage.setItem("ninjas", JSON.stringify(ninjasFiltrados))
 
