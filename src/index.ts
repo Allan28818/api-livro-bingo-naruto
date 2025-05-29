@@ -50,8 +50,17 @@ app.post("/add/ninja", (req, res) => {
   });
 });
 
-// Atualizar
-app.patch("/update/ninja", (req, res) => {});
+/**
+ * Exercício 01: Criar o método de atualizar usuário
+ *
+ * Restrições:
+ * - Não pode atualziar o "id", caso o id venha no body, vocês irão utilizar o operador delete no
+ * req.body.id
+ * - Quero editar o registro que tenha exatamente o mesmo id do req.params.id
+ * - Caso o registro não exista, retornar uma mensagem com o código HTTP adequado para elemento não
+ * encontrado e uma mensagem falando que o Ninja não está cadastrado
+ */
+app.patch("/update/ninja/:id", (req, res) => {});
 
 // Remover
 app.delete("/delete/ninja", (req, res) => {});
