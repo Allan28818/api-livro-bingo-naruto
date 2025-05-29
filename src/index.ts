@@ -60,8 +60,34 @@ app.post("/add/ninja", (req, res) => {
  * - Caso o registro não exista, retornar uma mensagem com o código HTTP adequado para elemento não
  * encontrado e uma mensagem falando que o Ninja não está cadastrado
  */
-app.patch("/update/ninja/:id", (req, res) => {});
+app.patch("/update/ninja/:id", (req, res) => {
 
+  // Receber o id da URL
+  try {
+      const id = req.params.id
+
+      const ninjas = localstorage.getItem("ninjas");
+      const parsedNinjas: NinjaProps[] = JSON.parse(ninjas || "[]");
+
+      const meuNinja = parsedNinjas.filter(ninja => ninja.id == id)
+      let ninjaAtualizado =  meuNinja[0]
+
+      Object.assign(ninjaAtualizado, req.body)
+
+      const ninjasFiltrados: NinjaProps[] = parsedNinjas.filter(ninja => ninja.id !== id)
+      ninjasFiltrados.push(ninjaAtualizado)
+
+      localstorage.setItem("ninjas", JSON.stringify(ninjasFiltrados))
+
+      res.status(200).json({mensagem: "Ninja atualizado com sucesso!"})
+  } catch (error){
+      res.status(500).json({mensagem: "Houve um erro inesperado ao atualizar ninja!"})
+  }
+
+});
+
+
+// /update/ninja/4
 // Remover
 app.delete("/delete/ninja", (req, res) => {});
 
