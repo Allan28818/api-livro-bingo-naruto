@@ -82,8 +82,35 @@ app.patch("/update/ninja/:id", (req, res) => {
 });
 
 // Remover
-app.delete("/delete/ninja", (req, res) => {});
+app.delete("/delete/ninja", (req, res) => {
+  const { id } = req.query;
 
+  const ninjas = localstorage.getItem("ninjas");
+  const parsedNinjas: NinjaProps[] = JSON.parse(ninjas || "[]");
+  let found:boolean = false;
+
+  parsedNinjas.forEach((ninja, index) => {
+    if (ninja.id === id) {
+
+      let deleteCount = 1;
+
+      parsedNinjas.splice(index, deleteCount);
+
+      found = true;
+      return;
+    }
+  });
+
+  if (!found) {
+    res.status(404).json({ message: "Id não encontrado." });
+    return;
+  }
+
+  localstorage.setItem("ninjas", JSON.stringify(parsedNinjas));
+
+  res.status(200).json({ message: "Ninja removido com sucesso" });
+})
+  
 app.listen(3000, () => {
   console.log("Servidor rodando 🍥");
 });
