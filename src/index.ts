@@ -3,6 +3,8 @@ import express from "express";
 import { LocalStorage } from "node-localstorage";
 import { NinjaProps } from "./models/NinjaProps";
 
+import { v4 as uuid } from "uuid";
+
 const app = express();
 
 app.use(express.json());
@@ -34,6 +36,8 @@ app.post("/add/ninja", (req, res) => {
 
   const ninjasFromDb = localstorage.getItem("ninjas")?.toString() || "";
   const parsedDb = JSON.parse(ninjasFromDb || "[]");
+
+  ninja.id = uuid();
 
   const ninjasList: NinjaProps[] = Array.isArray(parsedDb) ? parsedDb : [];
 
