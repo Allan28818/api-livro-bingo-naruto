@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
   if (name) {
     const filteredNinjas = parsedNinjas.filter((ninja) => {
-      ninja.name === name;
+      ninja.name == name;
     });
 
     res.status(200).json({ ninjas: filteredNinjas });
@@ -60,7 +60,7 @@ app.patch("/update/ninja/:id", (req, res) => {
   let hasEdited = false;
 
   parsedNinjas.forEach((ninja, index) => {
-    if (ninja.id === id) {
+    if (ninja.id == id) {
       const updatedNinja = { ...ninja, ...body };
       const deleteCount = 1;
 
@@ -82,7 +82,37 @@ app.patch("/update/ninja/:id", (req, res) => {
 });
 
 // Remover
-app.delete("/delete/ninja", (req, res) => {});
+app.delete("/delete/ninja", (req, res) => {
+
+  const { id } = req.query;
+
+  const ninjas = localstorage.getItem("ninjas");
+  const parsedNinjas: NinjaProps[] = JSON.parse(ninjas || "[]");
+
+  let removed = 0;
+
+  parsedNinjas.forEach((ninja, index) => {
+    if (ninja.id == id) {
+    
+      const deleteCount = 1;
+
+      parsedNinjas.splice(index, deleteCount);
+
+      removed = 1;
+
+      return;
+    }
+  });
+
+  if (!removed) {
+    res.status(404).json({ message: "Ninja não encontrado no livro bingo" });
+    return;
+  }
+
+  localstorage.setItem("ninjas", JSON.stringify(parsedNinjas));
+
+  res.status(200).json({ message: "Ninja removido com sucesso!" });
+});
 
 app.listen(3000, () => {
   console.log("Servidor rodando 🍥");
