@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
   if (name) {
     const filteredNinjas = parsedNinjas.filter((ninja) => {
-      ninja.name == name;
+      ninja.name === name;
     });
 
     res.status(200).json({ ninjas: filteredNinjas });
@@ -60,7 +60,7 @@ app.patch("/update/ninja/:id", (req, res) => {
   let hasEdited = false;
 
   parsedNinjas.forEach((ninja, index) => {
-    if (ninja.id == id) {
+    if (ninja.id === id) {
       const updatedNinja = { ...ninja, ...body };
       const deleteCount = 1;
 
@@ -92,7 +92,7 @@ app.delete("/delete/ninja", (req, res) => {
   let removed = 0;
 
   parsedNinjas.forEach((ninja, index) => {
-    if (ninja.id == id) {
+    if (ninja.id === id) {
     
       const deleteCount = 1;
 
