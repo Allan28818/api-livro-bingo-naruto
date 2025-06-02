@@ -82,14 +82,14 @@ app.patch("/update/ninja/:id", (req, res) => {
 });
 
 // Remover
-app.delete("/delete/ninja", (req, res) => {
+app.delete("/delete/ninja/:id", (req, res) => {
 
-  const { id } = req.query;
+  const { id } = req.params;
 
   const ninjas = localstorage.getItem("ninjas");
   const parsedNinjas: NinjaProps[] = JSON.parse(ninjas || "[]");
 
-  let removed = 0;
+  let alreadyRemoved: boolean = false;
 
   parsedNinjas.forEach((ninja, index) => {
     if (ninja.id === id) {
@@ -98,13 +98,13 @@ app.delete("/delete/ninja", (req, res) => {
 
       parsedNinjas.splice(index, deleteCount);
 
-      removed = 1;
+      alreadyRemoved = true;
 
       return;
     }
   });
 
-  if (!removed) {
+  if (!alreadyRemoved) {
     res.status(404).json({ message: "Ninja não encontrado no livro bingo" });
     return;
   }
